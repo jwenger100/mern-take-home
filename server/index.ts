@@ -2,12 +2,15 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import path from 'path';
 import loaders from './loaders';
+import dotenv from 'dotenv';
 
 async function startServer() {
   const app = express();
 
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
+
+  dotenv.config();
 
   const tickers = await loaders();
 

@@ -61,14 +61,12 @@ export class Ticker extends Component<ITickerProps, ITickerState> {
                 }]
             },
         };
-        
-        const data = this.transformData();
         return (
             <>
                 <div className='header'>
                     <h1 className='title'>{`${tickerSymbol} Price Chart`}</h1>
                 </div>
-                <Line data={data} options={options} width={800} height={400} />
+                <Line data={this.transformData()} options={options} width={800} height={400} />
             </>
         );
     }

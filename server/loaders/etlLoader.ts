@@ -1,7 +1,8 @@
 import path from 'path';
 import { readFile, readFilesInDirectory } from '../util/fileReader';
+import { ITicker } from '../database/ticker/ticker.types';
 
-interface ITicker {
+interface ITickerInput {
   date: string;
   assetId: number;
   nav: string;
@@ -17,13 +18,13 @@ interface ISymbology {
 }
 
 // Read files as part of the "ETL" pipeline for taking in stock ticker content.
-export default async () => {
+export default (): ITicker[] => {
   const symbology: ISymbology[] = [];
   // Read the symbols for the ticker from the symbology definition
   readFile<ISymbology>(symbology, path.join(__dirname, '/../data/inputs/koyfinSymbologyService.json'), onError);
   const symbols = symbology[0];
   // Read the input files from each of the dates in the input directory.
-  const files = readFilesInDirectory<ITicker>(path.join(__dirname, '/../data/inputs/json/'), onError);
+  const files = readFilesInDirectory<ITickerInput>(path.join(__dirname, '/../data/inputs/json/'), onError);
 
   // Get the most recent adjustment factor to use to calculate the adjusted price.
   let mostRecentAdjFactor = 0;
@@ -46,12 +47,13 @@ export default async () => {
     }
     // formula to compute adjusted price
     const adjustedPrice = navAsFloat * lastAdjustmentFactor / mostRecentAdjFactor;
-    return {
+    const mappedItem: ITicker = {
       ...symbols,
       date,
-      nav,
+      nav: navAsFloat,
       adjustedPrice
-    }
+    };
+    return mappedItem;
   });
 };
 
