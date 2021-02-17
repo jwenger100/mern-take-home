@@ -4,7 +4,7 @@
   "description": "Web App Built using the MERN stack for the purposes of the Koyfin takehome.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.ts",
+    "start": "ts-node index.ts",
     "dev": "nodemon index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
