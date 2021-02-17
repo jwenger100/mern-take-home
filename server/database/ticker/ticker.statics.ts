@@ -1,23 +1,19 @@
+import { PaginateResult } from 'mongoose';
 import { ITickerDocument, ITickerModel } from './ticker.types';
+import moment from 'moment';
+
+
 export async function findOneOrCreate(
   this: ITickerModel,
   {
     date,
     nav,
     KID,
-    ticker,
-    qualifiedTicker,
-    ISIN,
-    acmeAssetID,
     adjustedPrice
   }: {
-    date: string,
+    date: Date,
     nav: number,
     KID: string,
-    ticker: string, 
-    qualifiedTicker: string, 
-    ISIN: string, 
-    acmeAssetID: number, 
     adjustedPrice: number
   }
 ): Promise<ITickerDocument> {
@@ -25,13 +21,37 @@ export async function findOneOrCreate(
   if (record) {
     return record;
   } else {
-    return this.create({ date,
-        nav,
-        KID,
-        ticker, 
-        qualifiedTicker, 
-        ISIN, 
-        acmeAssetID, 
-        adjustedPrice });
+    return this.create({ 
+      date: moment(date).toDate(),
+      nav,
+      KID,
+      adjustedPrice 
+    });
   }
+}
+
+export async function getPaginated(
+  this: ITickerModel,
+  {
+    KID,
+    startDate,
+    endDate,
+    offset,
+    limit
+  }: {
+    KID: string,
+    startDate: Date,
+    endDate: Date,
+    offset: number,
+    limit: number
+  }
+): Promise<PaginateResult<ITickerDocument>> {
+  const query = { 
+    KID, 
+    date: { 
+      $gte: moment(startDate).toDate(),
+      $lte: moment(endDate).toDate()
+    }
+  };
+  return this.paginate(query, { offset, limit });
 }

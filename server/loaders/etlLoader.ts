@@ -1,3 +1,4 @@
+import moment from 'moment';
 import path from 'path';
 import { readFile, readFilesInDirectory } from '../util/fileReader';
 import { ITicker } from '../database/ticker/ticker.types';
@@ -48,8 +49,8 @@ export default (): ITicker[] => {
     // formula to compute adjusted price
     const adjustedPrice = navAsFloat * lastAdjustmentFactor / mostRecentAdjFactor;
     const mappedItem: ITicker = {
-      ...symbols,
-      date,
+      KID: symbols.KID,
+      date: moment(date).toDate(),
       nav: navAsFloat,
       adjustedPrice
     };

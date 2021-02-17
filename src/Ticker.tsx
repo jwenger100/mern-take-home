@@ -14,10 +14,6 @@ interface ITickerData {
     date: string;
     nav: string;
     KID: string;
-    ticker: string;
-    qualifiedTicker: string;
-    ISIN: string;
-    acmeAssetID: number;
     adjustedPrice: number;
 }
 
@@ -30,11 +26,8 @@ export class Ticker extends Component<ITickerProps, ITickerState> {
     }
 
     public componentDidMount() {
-        fetch('/ticker/LALDX?startDate=2019-12-19&endDate=2021-01-31')
-            .then(response => response.json())
-            .then(data => this.setState({
-                tickerData: data
-            }));
+        const tickers: ITickerData[] = [];
+        this.fetchTickersByPage(tickers, 0);
     }
 
     public render() {
@@ -102,4 +95,20 @@ export class Ticker extends Component<ITickerProps, ITickerState> {
             ]
         };
     }
+
+    private fetchTickersByPage = (tickers: ITickerData[], page: number) => {
+        // Objects are relatively small, lets grab 50 at a time. This number can be modified based on performance testing.
+        fetch(`/ticker/LALDX?startDate=2019-12-19&endDate=2021-01-31&page=${page}&size=50`)
+            .then(response => response.json())
+            .then(data => {
+                data.tickers.forEach((ticker: ITickerData) => tickers.push(ticker));
+                if (data.totalPages === data.currentPage) {
+                    this.setState({
+                        tickerData: tickers
+                    });
+                } else {
+                    this.fetchTickersByPage(tickers, data.currentPage + 1);
+                }
+            });
+    };
 }
