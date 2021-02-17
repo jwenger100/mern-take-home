@@ -1,4 +1,3 @@
-import bodyParser from 'body-parser';
 import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -9,8 +8,8 @@ import { getPagination } from './util/pagination';
 async function startServer() {
   const app = express();
 
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
+  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json());
 
   dotenv.config();
 
